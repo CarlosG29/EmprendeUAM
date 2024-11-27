@@ -1,0 +1,12 @@
+[12-Jul-2024 08:43:33 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Database\Eloquent\Model" not found in /home/cgurdian/public_html/uamEmprende/app/Models/Emprendimiento.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cgurdian/public_html/uamEmprende/app/Models/Emprendimiento.php on line 8
+[12-Jul-2024 08:43:34 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Database\Eloquent\Model" not found in /home/cgurdian/public_html/uamEmprende/app/Models/Emprendimiento.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cgurdian/public_html/uamEmprende/app/Models/Emprendimiento.php on line 8
+[12-Jul-2024 08:43:36 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Database\Eloquent\Model" not found in /home/cgurdian/public_html/uamEmprende/app/Models/Carrera.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cgurdian/public_html/uamEmprende/app/Models/Carrera.php on line 8
