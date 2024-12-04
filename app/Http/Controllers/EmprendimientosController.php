@@ -190,16 +190,19 @@ public function update(Request $request, Emprendimiento $emprendimiento)
             'categoria_id' => $validatedData['categoria_id'],
         ]);
 
-        // Guardar nuevas imágenes, si existen
+        // Manejar las imágenes
         if ($request->hasFile('imagenes')) {
+            // Eliminar las imágenes antiguas solo si se han subido nuevas
+            foreach ($emprendimiento->imagenes as $imagen) {
+                if (Storage::exists('public/' . $imagen->path)) {
+                    Storage::delete('public/' . $imagen->path);
+                }
+                $imagen->delete();
+            }
+
+            // Guardar las nuevas imágenes
             foreach ($request->file('imagenes') as $imagen) {
                 $path = $imagen->store('emprendimientos', 'public');
-
-                // Validar que $emprendimiento->id no sea null
-                if (!$emprendimiento->id) {
-                    throw new \Exception('El ID del emprendimiento es nulo al intentar guardar una imagen.');
-                }
-
                 EmprendimientoImagen::create([
                     'emprendimiento_id' => $emprendimiento->id,
                     'path' => $path,
@@ -216,6 +219,8 @@ public function update(Request $request, Emprendimiento $emprendimiento)
         return redirect()->back()->with('error', 'Hubo un problema al actualizar el emprendimiento. Por favor, inténtalo de nuevo.');
     }
 }
+
+
 
 
 
@@ -300,34 +305,35 @@ public function update(Request $request, Emprendimiento $emprendimiento)
             }
         }
         public function eliminarImagen($emprendimientoId, $imagenId)
-{
-    $imagen = EmprendimientoImagen::where('id', $imagenId)
-                ->where('emprendimiento_id', $emprendimientoId)
-                ->first();
+    {
+        $imagen = EmprendimientoImagen::where('id', $imagenId)
+                    ->where('emprendimiento_id', $emprendimientoId)
+                    ->first();
 
-    if (!$imagen) {
-        return redirect()->back()->with('error', 'La imagen no existe o no pertenece al emprendimiento.');
+        if (!$imagen) {
+            return redirect()->back()->with('error', 'La imagen no existe o no pertenece al emprendimiento.');
+        }
+
+        // Eliminar el archivo físico
+        if (Storage::exists('public/' . $imagen->path)) {
+            Storage::delete('public/' . $imagen->path);
+        }
+
+        $imagen->delete();
+
+        // Si no quedan imágenes, agregar una predeterminada
+        $emprendimiento = Emprendimiento::findOrFail($emprendimientoId);
+        if ($emprendimiento->imagenes()->count() === 0) {
+            $defaultImagePath = 'emprendimientos/default.jpg'; // Ruta a tu imagen predeterminada
+            EmprendimientoImagen::create([
+                'emprendimiento_id' => $emprendimiento->id,
+                'path' => $defaultImagePath,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Imagen eliminada con éxito.');
     }
 
-    // Eliminar el archivo físico
-    if (Storage::exists('public/' . $imagen->path)) {
-        Storage::delete('public/' . $imagen->path);
-    }
-
-    $imagen->delete();
-
-    // Si no quedan imágenes, agregar una predeterminada
-    $emprendimiento = Emprendimiento::findOrFail($emprendimientoId);
-    if ($emprendimiento->imagenes()->count() === 0) {
-        $defaultImagePath = 'emprendimientos/default.jpg'; // Ruta a tu imagen predeterminada
-        EmprendimientoImagen::create([
-            'emprendimiento_id' => $emprendimiento->id,
-            'path' => $defaultImagePath,
-        ]);
-    }
-
-    return redirect()->back()->with('success', 'Imagen eliminada con éxito.');
-}
 
 
 

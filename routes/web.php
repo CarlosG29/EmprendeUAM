@@ -42,7 +42,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/estudiantes/import', [EstudianteController::class, 'import'])->name('estudiantes.import');
 
     Route::put('/emprendimiento/{emprendimiento}/editarbd', [EmprendimientosController::class, 'update'])->name('actualizar.emprendimiento');
-
+    Route::put('/comentarios/{comentario}', [ComentarioController::class, 'update'])->name('comentarios.update');
+    Route::delete('/comentarios/{comentario}', [ComentarioController::class, 'destroy'])->name('comentarios.destroy');
+    
+    Route::put('/emprendimientos/{emprendimiento}', [EmprendimientoController::class, 'update'])->name('emprendimientos.update');
 
     // Otras rutas protegidas
     Route::get('/profile/{id}/edit', [EstudianteController::class, 'edit'])->name('profile.edit');
